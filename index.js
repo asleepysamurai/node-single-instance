@@ -28,7 +28,6 @@ SingleInstance.prototype.lock = function(callback) {
     var self = this;
 
     var promise = new RSVP.Promise(function(resolve, reject) {
-        console.log('using socket ', self._socketPath);
         var client = net.connect({ path: self._socketPath }, function() {
             client.write('connectionAttempt', function() {
                 //reject('An application is already running');
@@ -41,7 +40,6 @@ SingleInstance.prototype.lock = function(callback) {
         });
 
         client.on('error', function(err) {
-            console.log(err);
             try {
                 fs.unlinkSync(self._socketPath);
             } catch (e) {
