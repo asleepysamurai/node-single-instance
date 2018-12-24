@@ -30,8 +30,13 @@ SingleInstance.prototype.lock = function(callback) {
     var promise = new RSVP.Promise(function(resolve, reject) {
         var client = net.connect({ path: self._socketPath }, function() {
             client.write('connectionAttempt', function() {
-                reject({ message: 'An application is already running', pid: process.pid });
+                //reject('An application is already running');
             });
+        });
+
+        client.on('data', function(data) {
+            const pid = parseInt(data.toString());
+            reject({ message: 'An application is already running', pid: pid });
         });
 
         client.on('error', function(err) {
@@ -43,6 +48,7 @@ SingleInstance.prototype.lock = function(callback) {
                 }
             }
             self._server = net.createServer(function(connection) {
+                connection.write('' + process.pid);
                 connection.on('data', function() {
                     self.emit('connection-attempt');
                 });
