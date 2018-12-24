@@ -41,6 +41,7 @@ SingleInstance.prototype.lock = function(callback) {
         });
 
         client.on('error', function(err) {
+            console.log(err);
             try {
                 fs.unlinkSync(self._socketPath);
             } catch (e) {
